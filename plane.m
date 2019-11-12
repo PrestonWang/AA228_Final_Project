@@ -1,4 +1,4 @@
-classdef plane
+classdef plane < handle
     %2D kinematic plane model
     %   8 states: (x,y,theta,m xdot, ydot, thetadot, mdot), where m is
     %   equal to fuel remaining
@@ -7,27 +7,34 @@ classdef plane
     %   gains
     
     properties
-        v_max = 12; % miles/min
-        v_cruise = 8; % miles/min
-        v_stall = 2.4; % miles/min
-        max_yaw = pi/min; % rad/min
-        initcon = [100;100;0;90000];
-        fuel_rate = 5000*60 % lbs/min
-        gains = struct('ki',1,'kp',1,'kw',1,'kc',1,'kf', 0.01);
-        state = initcon
+        v = 1; % miles/min
+        initcon;
+        fuel_rate = 5000/60 % lbs/min
+        state;
+        state_past;
     end
     
     methods
-        function next_waypoint
+        function obj = plane(initcon)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
+            obj.initcon = initcon;
+            obj.state = initcon;
+            obj.state_past = initcon;
         end
         
-        function outputArg = method1(obj,inputArg)
+        function theta = calcHeading(obj,target)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+            theta = atan2(target(2)-obj.state(2), target(1)-obj.state(1));
+        end
+        function [new_state] = calcState(obj,t,target)
+            %METHOD1 Summary of this method goes here
+            %   Detailed explanation goes here
+            theta = atan2(target(2)-obj.state(2), target(1)-obj.state(1));
+            new_state = [obj.state(1)+cos(theta)*obj.v*t; obj.state(2)+sin(theta)*obj.v*t; theta; obj.state(4) - obj.fuel_rate*t];
+            obj.state = new_state;
+            obj.state_past = [obj.state_past, new_state];
         end
     end
 end
