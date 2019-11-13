@@ -4,13 +4,23 @@
 % current position
 
 %% Initialize Gridworld
-plane1 = plane([
-g = gridWorld();
-
+g.N = 10;
 num_states = 4;
 num_actions = 2;
-R = zeros(g.N^num_states,g.N^num_actions);
-for s = 1:num_states
-    for a = 1:num_actions
-        
+total_states = g.N^num_states;
+total_actions = g.N^num_actions;
+state_dim = [g.N, g.N, g.N, g.N];
+action_dim = [g.N, g.N];
+sigma = 1;
+ax = 5;
+ay = 5;
+R = zeros(total_states,total_actions);
+T = ones(
+for s = 1:total_states
+    for a = 1:total_actions
+        [px, py, sx, sy] = ind2sub(state_dim,s);
+        [wx, wy] = ind2sub(action_dim);
+        R(s,a) = dummy_cost(px,py,sx,sy,wx,wy,sigma,ax,ay);
+    end
+end
         
