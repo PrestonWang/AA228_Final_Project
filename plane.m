@@ -17,11 +17,13 @@ classdef plane < handle
     end
     
     methods
-        function obj = plane(initcon)
+        function obj = plane(initcon,v, fuel_rate)
             %Construct a plane object with initial conditions
             obj.initcon = initcon;
             obj.state = initcon;
             obj.state_past = initcon;
+            obj.v = v;
+            obj.fuel_rate = fuel_rate;
         end
         
         function theta = calcHeading(obj,target)
