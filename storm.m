@@ -36,6 +36,9 @@ classdef storm
             obj.Y = y;
             obj.sigma = sigma;
             obj.speed = speed;
+            if abs(sum(transProbs) - 1) > 1e-5
+                error('Sum of transition probabilities must be equal to 1!');
+            end
             obj.transProbs = transProbs;
             obj.transAngles = linspace(0, 2*pi, length(transProbs)+1);
             obj.transAngles = obj.transAngles(1:end-1); % not including 2*pi
@@ -46,10 +49,9 @@ classdef storm
             % Move storm then update newX and newY and X and Y in storm obj
             theta = randsrc(1, 1, [this.transAngles; this.transProbs]);
             r = this.speed*dt; % dt in mins, speed in miles / min
-            this.X = r*cos(theta);
-            this.Y = r*sin(theta);
+            this.X = this.X + r*cos(theta);
+            this.Y = this.Y + r*sin(theta);
         end
-        
     end
 end
 
