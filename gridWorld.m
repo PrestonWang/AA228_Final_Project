@@ -9,18 +9,22 @@ classdef gridWorld
         gridState;
         X;
         Y;
+        plane;
+        storm;
         airportX;
         airportY;
     end
     
     methods
         %Initialization function
-        function world = gridWorld(initX, initY, Xfinal, Yfinal)
-            world.gridState = zeros(100, 100);
-            world.X = initX;
-            world.Y = initY;
-            world.airportX = Xfinal;
-            world.airportY = Yfinal;
+        function world = gridWorld(plane, storm, N, airportX, airportY)
+            world.gridState = zeros(N, N); % initialize grid
+            world.plane = plane;
+            world.storm = storm;
+            world.X = plane.state(1);
+            world.Y = plane.state(2);
+            world.airportX = airportX;
+            world.airportY = airportY;
         end
         
         function updateRewards(obj, storm)
@@ -29,16 +33,16 @@ classdef gridWorld
         end
         
         % Interpolate the reward at a state given its current position
-        function interpval = interpolateVal(obj)
-            x1 = fix(obj.X/1);
+        function interpval = interpolateVal(x, y)
+            x1 = fix(x/1);
             x2 = x1 + 1;
-            y1 = fix(obj.Y/1);
+            y1 = fix(y/1);
             y2 = y1 + 1;
-            xinterpy1 = (x2-obj.X)/(x2-x1)*obj.gridState(x1, y1) + ...
-                (obj.X-x1)/(x2-x1)*obj.gridState(x2, y1);
-            xinterpy2 = (x2-obj.X)/(x2-x1)*obj.gridState(x1, y2) + ...
-                (obj.X-x1)/(x2-x1)*obj.gridState(x2, y2);
-            interpval = (y2-obj.Y)/(y2-y1)*xinterpy1 + (obj.Y-y1)/...
+            xinterpy1 = (x2-x)/(x2-x1)*obj.gridState(x1, y1) + ...
+                (x-x1)/(x2-x1)*obj.gridState(x2, y1);
+            xinterpy2 = (x2-x)/(x2-x1)*obj.gridState(x1, y2) + ...
+                (x-x1)/(x2-x1)*obj.gridState(x2, y2);
+            interpval = (y2-y)/(y2-y1)*xinterpy1 + (y-y1)/...
                 (y2-y1)*xinterpy2;  
         end
         
