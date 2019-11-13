@@ -1,31 +1,42 @@
 % Colin Shi, Preston Wang, and Nathan Wei
 % AA 228 Final Project, Fall 2019
 % Initial gridWorld structure
+% Dependencies: plane.m, storm.m
 % Created: 11/08/2019, CS
-% Updated: 11/08/2019, CS
+% Updated: 11/13/2019, NW
 
 classdef gridWorld
     properties
-        gridState;
-        X;
-        Y;
-        airportX;
-        airportY;
+        gridState; % N x N matrix for grid state
+        X; % vector of length N with physical values for grid x-dimension
+        Y; % vector of length N with physical values for grid y-dimension
+        airportX; % x-index of airport
+        airportY; % y-index of airport
+        N; % dimension of (square) gridWorld
+        plane; % plane object
+        storm; % storm object
     end
     
     methods
-        %Initialization function
-        function world = gridWorld(initX, initY, Xfinal, Yfinal)
-            world.gridState = zeros(100, 100);
-            world.X = initX;
-            world.Y = initY;
-            world.airportX = Xfinal;
-            world.airportY = Yfinal;
+        % Initialization function (constructs gridWorld object)
+        function world = gridWorld(N, X, Y, airportX, airportY, plane, storm)
+            if length(X) ~= N || length(Y) ~= N
+                error('X and Y must be vectors of length N!');
+            end
+            world.gridState = zeros(N);
+            world.N = N;
+            world.X = X;
+            world.Y = Y;
+            world.airportX = airportX;
+            world.airportY = airportY;
+            world.plane = plane;
+            world.storm = storm;
         end
         
-        function updateRewards(obj, storm)
+        function updateRewards(world)
             % Updates the value at each node given storm the current state
             % of the world and a storm object as a 2D Gaussian
+            
         end
         
         % Interpolate the reward at a state given its current position
