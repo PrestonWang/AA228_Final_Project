@@ -21,8 +21,7 @@ classdef storm
     %   = This should show that our model isn't dependent on storm speed
     
     properties
-        X; % grid position of storm (x)
-        Y; % grid position of storm (y) [storm can wander off grid]
+        state; % location of storm (x,y)
         sigma; % standard deviation of Gaussian
         speed; % speed of storm, in miles per minute
         transProbs; % directional transition probabilities on the circle
@@ -32,8 +31,7 @@ classdef storm
     methods
         % Constructor for an instance of the storm class
         function obj = storm(x, y, sigma, speed, transProbs)
-            obj.X = x;
-            obj.Y = y;
+            obj.state = [x,y];
             obj.sigma = sigma;
             obj.speed = speed;
             if abs(sum(transProbs) - 1) > 1e-5
@@ -49,8 +47,7 @@ classdef storm
             % Move storm then update newX and newY and X and Y in storm obj
             theta = randsrc(1, 1, [this.transAngles; this.transProbs]);
             r = this.speed*dt; % dt in mins, speed in miles / min
-            this.X = this.X + r*cos(theta);
-            this.Y = this.Y + r*sin(theta);
+            this.state = this.state + [r*cos(theta), r*sin(theta)];
         end
     end
 end
