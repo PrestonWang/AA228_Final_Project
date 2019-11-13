@@ -20,8 +20,8 @@ yHistory = zeros(steps, 1);
 % Run simulation
 for ii = 1 : steps
     % Get current storm location
-    xHistory(ii) = stormObj.X;
-    yHistory(ii) = stormObj.Y;
+    xHistory(ii) = stormObj.state(1);
+    yHistory(ii) = stormObj.state(2);
     % Move storm
     stormObj = move(stormObj, 1);
 end
