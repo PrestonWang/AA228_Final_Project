@@ -10,8 +10,8 @@ classdef gridWorld
         gridState; % N x N matrix for grid state
         X; % vector of length N with physical values for grid x-dimension
         Y; % vector of length N with physical values for grid y-dimension
-        airportX; % x-index of airport
-        airportY; % y-index of airport
+        waypt; % location of waypoint (x,y)
+        airport; % location of airport (x,y)
         N; % dimension of (square) gridWorld
         plane; % plane object
         storm; % storm object
@@ -19,7 +19,8 @@ classdef gridWorld
     
     methods
         % Initialization function (constructs gridWorld object)
-        function world = gridWorld(N, X, Y, airportX, airportY, plane, storm)
+        function world = gridWorld(N, X, Y, wayptX, wayptY, ...
+                airportX, airportY, plane, storm)
             if length(X) ~= N || length(Y) ~= N
                 error('X and Y must be vectors of length N!');
             end
@@ -27,16 +28,31 @@ classdef gridWorld
             world.N = N;
             world.X = X;
             world.Y = Y;
-            world.airportX = airportX;
-            world.airportY = airportY;
+            world.waypt = [wayptX, wayptY];
+            world.airport = [airportX, airportY];
             world.plane = plane;
             world.storm = storm;
         end
         
-        function updateRewards(world)
-            % Updates the value at each node given storm the current state
-            % of the world and a storm object as a 2D Gaussian
-            
+        % Cost function
+        function cost(world, planeX, planeY, stormX, stormY, sigma, ...
+                wayptX, wayptY, airportX, airportY)
+            % Allow cost function to be called with or without state vars
+            if nargin == 1
+                planeX = world.plane.state(1);
+                planeY = world.plane.state(2);
+                stormX = world.storm.state(1);
+                stormY = world.storm.state(2);
+                sigma = world.storm.sigma;
+                wayptX = world.waypt(1);
+                wayptY = world.waypt(2);
+                airportX = world.airport(1);
+                airportY = world.airport(2);
+            end
+            % Compute cost
+            % - Euclidean distance
+            % - Line integral over path through storm
+            % - Need weighting coefficients
         end
         
         % Interpolate the reward at a state given its current position
@@ -54,6 +70,7 @@ classdef gridWorld
         end
         
         %Check to see if plane is within bounds
+        % REPLACE WITH VALIDATION FUNCTION FOR PLANE AND STORM COORDS
         function bool = boundCheck(obj)
             if (obj.X <= 100) && (obj.Y <= 100) && (obj.X >= 0)...
                     && (obj.Y >= 100)
@@ -63,6 +80,7 @@ classdef gridWorld
             end
         end
         
+        % Update positions of plane and storm
         function updatePos(obj, plane, timestep, target)
             newState = plane.calcState(timestep, target);
             obj.X = newState(1);
