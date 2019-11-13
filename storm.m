@@ -4,7 +4,7 @@
 % Created: 11/01/2019, NW
 % Updated: 11/12/2019, NW
 
-classdef storm
+classdef storm < handle
     % Storm model
     %   States: x and y position, standard deviation (sigma)
     %   Transition probabilities for an array of angles
@@ -43,12 +43,12 @@ classdef storm
         end
         
         % Move storm according to speed and transition probabilities
-        function this = move(this, dt)
+        function newState = move(this, dt)
             % Move storm then update newX and newY and X and Y in storm obj
             theta = randsrc(1, 1, [this.transAngles; this.transProbs]);
             r = this.speed*dt; % dt in mins, speed in miles / min
             this.state = this.state + [r*cos(theta), r*sin(theta)];
+            newState = this.state;
         end
     end
 end
-
