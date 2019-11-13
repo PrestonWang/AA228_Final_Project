@@ -2,7 +2,7 @@
 % AA 228 Final Project, Fall 2019
 % Weather class: represents storm in 2D grid-world and allows it to move
 % Created: 11/01/2019, NW
-% Updated: 11/12/2019, NW
+% Updated: 11/13/2019, NW
 
 classdef storm < handle
     % Storm model
