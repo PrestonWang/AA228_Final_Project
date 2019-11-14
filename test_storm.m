@@ -23,7 +23,7 @@ for ii = 1 : steps
     xHistory(ii) = stormObj.state(1);
     yHistory(ii) = stormObj.state(2);
     % Move storm
-    stormObj = move(stormObj, 1);
+    newState = move(stormObj, 1);
 end
 
 % Plot results
