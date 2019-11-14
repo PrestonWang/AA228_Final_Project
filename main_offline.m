@@ -32,16 +32,22 @@ wayptX = 50;
 wayptY = 50;
 costWeights = [1 1];
 
+% value iteration parameters
+discount = 0.95;
+epsilon = .01;
+max_iter = 1000;
+
 %% Initialize Gridworld
 plane1 = plane([10,10,0,100000],1,5000/60);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
 
 %% Value Iteration
+% calculating reward function
 num_states = 4;
 num_actions = 2;
-total_states = g.N^num_states;
-total_actions = g.N^num_actions;
+total_states = g.N^num_states; % total number of states 
+total_actions = g.N^num_actions; % total number of actions
 state_dim = [g.N, g.N, g.N, g.N];
 action_dim = [g.N, g.N];
 R = zeros(total_states,total_actions, 'single');
@@ -49,12 +55,20 @@ for s = 1:total_states
     for a = 1:total_actions
         [px, py, sx, sy] = ind2sub(state_dim,s);
         [wx, wy] = ind2sub(action_dim,a);
-        R(s,a) = g.cost(px,py,sx,sy,wx,wy,stormS,airportX,airportY);
+        R(s,a) = g.cost(px,py,sx,sy,wx,wy,stormS,airportX,airportY); % 2d matrix of reward
     end
 end
+% setting up MDP
 V0 = zeros(size(R,1),1, 'single');
-discount = 0.95;
-epsilon = .01;
-max_iter = 1000;
-[policy, iter, cpu_time] = mdp_value_iteration(R, discount, epsilon, max_iter, V0);
+
+% solving MDP
+[policy_vec, iter, cpu_time] = mdp_value_iteration(R, discount, epsilon, max_iter, V0);
+
+% converting policy to matrix form
+policy = zeros(state_dim, 'int8');
+for p = 1:total_states
+    policy(ind2sub(state_dim,p)) = policy_vec(p);
+end
+
+% saving 
 save(filename,'policy','N','airportX', 'airportY','costWeights','discount','epsilon', 'stormS','stormT');
