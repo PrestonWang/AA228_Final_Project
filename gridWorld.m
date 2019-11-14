@@ -10,33 +10,51 @@ classdef gridWorld
         gridState; % N x N matrix for grid state
         X; % vector of length N with physical values for grid x-dimension
         Y; % vector of length N with physical values for grid y-dimension
+        meshX; % x-output of meshgrid(X, Y)
+        meshY; % y-output of meshgrid(X, Y)
         waypt; % location of waypoint (x,y)
         airport; % location of airport (x,y)
         N; % dimension of (square) gridWorld
         plane; % plane object
         storm; % storm object
+        costWeights; % 2-element vector of cost weights for distance and storm
     end
     
     methods
         % Initialization function (constructs gridWorld object)
         function world = gridWorld(N, X, Y, wayptX, wayptY, ...
-                airportX, airportY, plane, storm)
+                airportX, airportY, plane, storm, costWeights)
+            % Validate arguments
             if length(X) ~= N || length(Y) ~= N
                 error('X and Y must be vectors of length N!');
+            end
+            if wayptX > max(X) || wayptX < min(X) ...
+                    || wayptY > max(Y) || wayptY < min(Y) ...
+                    || airportX > max(X) || airportX < min(X) ...
+                    || airportY > max(Y) || airportY < min(Y) ...
+                    || plane.state(1) > max(X) || plane.state(1) < min(X) ...
+                    || plane.state(2) > max(Y) || plane.state(2) < min(Y) ...
+                    || storm.state(1) > max(X) || storm.state(1) < min(X) ...
+                    || storm.state(2) > max(Y) || storm.state(2) < min(Y)
+                error('Coordinates are outside range of X and Y!');
             end
             world.gridState = zeros(N);
             world.N = N;
             world.X = X;
             world.Y = Y;
+            [world.meshX, world.meshY] = meshgrid(X, Y);
             world.waypt = [wayptX, wayptY];
             world.airport = [airportX, airportY];
             world.plane = plane;
             world.storm = storm;
+            world.costWeights = costWeights;
         end
         
         % Cost function
-        function cost(world, planeX, planeY, stormX, stormY, sigma, ...
-                wayptX, wayptY, airportX, airportY)
+        % Can be called using world.cost(world) [use stored parameters]
+        % or world.cost(planeX, planeY, etc.) [use arguments as parameters]
+        function totalCost = cost(world, planeX, planeY, stormX, stormY, ...
+                sigma, wayptX, wayptY, airportX, airportY)
             % Allow cost function to be called with or without state vars
             if nargin == 1
                 planeX = world.plane.state(1);
@@ -49,10 +67,28 @@ classdef gridWorld
                 airportX = world.airport(1);
                 airportY = world.airport(2);
             end
-            % Compute cost
-            % - Euclidean distance
-            % - Line integral over path through storm
-            % - Need weighting coefficients
+            % Compute Euclidean distance
+            totalDist = sqrt((planeX-wayptX)^2 + (planeY-wayptY)^2) ...
+                + sqrt((wayptX-airportX)^2 + (wayptY-airportY)^2);
+            
+            % Compute storm cost: 2 line integrals
+            stormCosts = (1 / (sigma*sqrt(2*pi))) ...
+                * exp(-((world.meshX-stormX).^2 ...
+                + (world.meshY-stormY).^2)./(2*sigma^2));
+            % Source: https://www.mathworks.com/matlabcentral/answers/298011-line-integral-over-a-scalar-field
+            t = linspace(0,1,world.N*4)'; % number of points = world.N * 4
+            seg1 = (1-t)*[planeX, planeY] + t*[wayptX, wayptY];
+            zseg1 = interp2(world.meshX, world.meshY, stormCosts, ...
+                seg1(:,1), seg1(:,2));
+            stormCost1 = trapz(cumsum([0;sqrt(sum(diff(seg1).^2,2))]), zseg1);
+            seg2 = (1-t)*[wayptX, wayptY] + t*[airportX, airportY];
+            zseg2 = interp2(world.meshX, world.meshY, stormCosts, ...
+                seg2(:,1), seg2(:,2));
+            stormCost2 = trapz(cumsum([0;sqrt(sum(diff(seg2).^2,2))]), zseg2);
+            
+            % Compute total cost
+            totalCost = world.costWeights(1)*totalDist ...
+                + world.costWeights(2)*(stormCost1+stormCost2);
         end
         
         % Interpolate the reward at a state given its current position
@@ -69,22 +105,25 @@ classdef gridWorld
                 (y2-y1)*xinterpy2;  
         end
         
-        %Check to see if plane is within bounds
-        % REPLACE WITH VALIDATION FUNCTION FOR PLANE AND STORM COORDS
-        function bool = boundCheck(obj)
-            if (obj.X <= 100) && (obj.Y <= 100) && (obj.X >= 0)...
-                    && (obj.Y >= 100)
-                bool = 1;
-            else
-                bool = 0;
-            end
-        end
-        
         % Update positions of plane and storm
-        function updatePos(obj, plane, timestep, target)
-            newState = plane.calcState(timestep, target);
-            obj.X = newState(1);
-            obj.Y = newState(2);
+        function updatePos(world, timestep, target)
+            newState = world.plane.calcState(timestep, target);
+            % Validation (should never happen if plane.v*timestep < dx)
+            if newState(1) > max(world.X) || newState(1) < min(world.X) ...
+                    || newState(2) > max(world.Y) || newState(2) < min(world.Y)
+                error('Plane is out of range!');
+            end
+            % Move storm and keep it within the bounds of the grid
+            stormState = world.storm.move(timestep);
+            attempts = 0;
+            while stormState(1) > max(world.X) || stormState(1) < min(world.X) ...
+                    || stormState(2) > max(world.Y) || stormState(2) < min(world.Y)
+                stormState = world.storm.move(timestep);
+                attempts = attempts + 1;
+                if attempts > 100
+                    error('Storm is stuck :(');
+                end
+            end
         end
     end
 end
