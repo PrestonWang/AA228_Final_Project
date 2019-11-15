@@ -36,6 +36,7 @@ costWeights = [1 1];
 discount = 0.95;
 epsilon = .01;
 max_iter = 1000;
+endStateReward = 1000; % Reward for reaching the airport
 
 %% Initialize Gridworld
 plane1 = plane([10,10,0,100000],1,5000/60);
@@ -55,7 +56,10 @@ for s = 1:total_states
     for a = 1:total_actions
         [px, py, sx, sy] = ind2sub(state_dim,s);
         [wx, wy] = ind2sub(action_dim,a);
-        R(s,a) = g.cost(px,py,sx,sy,wx,wy,stormS,airportX,airportY); % 2d matrix of reward
+        R(s,a) = -g.cost((px-1)*10,(py-1)*10,(sx-1)*10,(sy-1)*10,(wx-1)*10,(wy-1)*10,stormS,airportX,airportY); % costs are negative rewards
+        if (px-1)*10 == g.airport(1) && (py-1)*10 == g.airport(2)
+            R(s,a) = R(s,a) + endStateReward; % High reward for reaching the airport
+        end
     end
 end
 % setting up MDP
