@@ -1,7 +1,7 @@
 % Colin Shi, Preston Wang, and Nathan Wei
 % AA 228 Final Project, Fall 2019
 % main_offline - solves the optimal policy for all plane and storm
-% combinations. Assumes that plane and storms have to be on the grid. 
+% combinations. Assumes that plane and storms have to be on the grid.
 % save policy and parameters as .mat file
 %   saves policy, stormS, stormT, N, airportX, airportY, costWeights,
 %   discount, epsilon
@@ -41,7 +41,7 @@ endStateReward = 1000; % Reward for reaching the airport
 %% Initialize Gridworld
 tic;
 h = waitbar(0,'Initializing parameters...','Name','Running offline solver');
-plane1 = plane([10,10,0,100000],1,5000/60,wayptX,wayptY);
+plane1 = plane([planeX,planeY,planeTheta,planeM],planeV,fuel_rate,[wayptX,wayptY]);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
 
@@ -49,15 +49,17 @@ g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costW
 % calculating reward function
 num_states = 4;
 num_actions = 2;
-total_states = g.N^num_states; % total number of states 
+total_states = g.N^num_states; % total number of states
 total_actions = g.N^num_actions; % total number of actions
 state_dim = [g.N, g.N, g.N, g.N];
 action_dim = [g.N, g.N];
 R = zeros(total_states,total_actions, 'single');
 for s = 1:total_states
-    waitbar(s/total_states,h,sprintf(...
+    if mod(s,10) == 0
+        waitbar(s/total_states,h,sprintf(...
             'Computing reward function...\n Remaining time: %ds',...
             fix(toc*(total_states-s)/s)));
+    end
     for a = 1:total_actions
         [px, py, sx, sy] = ind2sub(state_dim,s);
         [wx, wy] = ind2sub(action_dim,a);
@@ -77,7 +79,7 @@ for p = 1:total_states
     policy(ind2sub(state_dim,p)) = policy_vec(p);
 end
 
-% saving 
+% saving
 save(filename,'policy','N','airportX', 'airportY','costWeights','discount','epsilon', 'stormS','stormT');
 close(h);
 fprintf('Offline solver completed in %.2f minutes!\n', toc/60);
