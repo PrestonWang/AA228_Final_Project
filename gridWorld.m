@@ -38,7 +38,7 @@ classdef gridWorld
                     || storm.state(2) > max(Y) || storm.state(2) < min(Y)
                 error('Coordinates are outside range of X and Y!');
             end
-            world.gridState = zeros(N);
+            % world.gridState = zeros(N);
             world.N = N;
             world.X = X;
             world.Y = Y;
@@ -91,6 +91,7 @@ classdef gridWorld
                 + world.costWeights(2)*(stormCost1+stormCost2);
         end
         
+        %{
         % Interpolate the reward at a state given its current position
         function interpval = interpolateVal(x, y)
             x1 = fix(x/1);
@@ -104,6 +105,7 @@ classdef gridWorld
             interpval = (y2-y)/(y2-y1)*xinterpy1 + (y-y1)/...
                 (y2-y1)*xinterpy2;  
         end
+        %}
         
         % Update positions of plane and storm
         function updatePos(world, timestep, target)
