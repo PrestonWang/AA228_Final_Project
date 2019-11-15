@@ -77,8 +77,7 @@ classdef gridWorld
                     + sqrt((wayptX-airportX)^2 + (wayptY-airportY)^2);
 
                 % Compute storm cost: 2 line integrals
-                stormCosts = (1 / (sigma*sqrt(2*pi))) ...
-                    * exp(-((world.meshX-stormX).^2 ...
+                stormCosts = exp(-((world.meshX-stormX).^2 ...
                     + (world.meshY-stormY).^2)./(2*sigma^2));
                 % Source: https://www.mathworks.com/matlabcentral/answers/298011-line-integral-over-a-scalar-field
                 t = linspace(0,1,world.N*4)'; % number of points = world.N * 4

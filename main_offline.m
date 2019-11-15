@@ -18,7 +18,7 @@ stormT  = [0.2 0.4 0.3 0.1]; % transition probabilities (on circle)
 % Plane Parameters
 fuel_rate = 5000/60;
 planeX = 100;
-PlaneY = 100;
+planeY = 100;
 planeTheta = 0;
 planeM = 100000;
 planeV = 1;
@@ -30,7 +30,7 @@ airportX = 50;
 airportY = 50;
 wayptX = 50;
 wayptY = 50;
-costWeights = [1 1];
+costWeights = [1 exp(0.5)];
 
 % value iteration parameters
 discount = 0.95;
@@ -39,7 +39,9 @@ max_iter = 1000;
 endStateReward = 1000; % Reward for reaching the airport
 
 %% Initialize Gridworld
-plane1 = plane([10,10,0,100000],1,5000/60);
+tic;
+h = waitbar(0,'Initializing parameters...','Name','Running offline solver');
+plane1 = plane([10,10,0,100000],1,5000/60,wayptX,wayptY);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
 
@@ -53,6 +55,9 @@ state_dim = [g.N, g.N, g.N, g.N];
 action_dim = [g.N, g.N];
 R = zeros(total_states,total_actions, 'single');
 for s = 1:total_states
+    waitbar(s/total_states,h,sprintf(...
+            'Computing reward function...\n Remaining time: %ds',...
+            fix(toc*(total_states-s)/s)));
     for a = 1:total_actions
         [px, py, sx, sy] = ind2sub(state_dim,s);
         [wx, wy] = ind2sub(action_dim,a);
@@ -63,6 +68,7 @@ end
 V0 = zeros(size(R,1),1, 'single');
 
 % solving MDP
+waitbar(1,h,'Solving MDP...');
 [policy_vec, iter, cpu_time] = mdp_value_iteration(R, discount, epsilon, max_iter, V0);
 
 % converting policy to matrix form
@@ -73,3 +79,5 @@ end
 
 % saving 
 save(filename,'policy','N','airportX', 'airportY','costWeights','discount','epsilon', 'stormS','stormT');
+close(h);
+fprintf('Offline solver completed in %.2f minutes!\n', toc/60);
