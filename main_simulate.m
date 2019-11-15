@@ -10,10 +10,10 @@
 clear
 %% Parameters
 % Storm Parameters
-stormX  = 25; % storm position (x)
-stormY  = 25; % storm position (y)
+stormX  = 1; % storm position (x)
+stormY  = 1; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
-stormU  = 1; % storm speed (mi/min)
+stormU  = .001; % storm speed (mi/min)
 stormT  = [0.25 .25 .25 .25]; % transition probabilities (on circle)
 % Plane Parameters
 fuel_rate = 5000/60;
@@ -37,7 +37,7 @@ threshold = 10e-2;
 plane1 = plane([planeX,planeY,0,100000],1,5000/60, [wayptX, wayptY]);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
-load policies/policy2.mat;
+load policies/policy3.mat;
 
 %% Simulate
 num_states = 4;
@@ -58,7 +58,7 @@ while sqrt((g.plane.state(1)-g.airport(1))^2 + (g.plane.state(2)-g.airport(2))^2
     wayptX = g.X(waypt_ix);
     wayptY = g.X(waypt_iy);
     target = [wayptX, wayptY];
-    g.updatePos(1, target);
+    g.updatePos(10, target);
     % Use the line integral to compute the cost accumulated during a single
     % time step
     penalty = g.cost();

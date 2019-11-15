@@ -31,7 +31,7 @@ airportX = 50;
 airportY = 50;
 wayptX = 50;
 wayptY = 50;
-costWeights = [1 1];
+costWeights = [1 exp(.5)];
 
 % value iteration parameters
 discount = 0.95;
@@ -40,7 +40,7 @@ max_iter = 1000;
 endStateReward = 1000; % Reward for reaching the airport
 
 %% Initialize Gridworld
-plane1 = plane([10,10,0,100000],1,5000/60, [wayptX, wayptY]);
+plane1 = plane([planeX,planeY,planeTheta,planeM],1,5000/60, [wayptX, wayptY]);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
 
