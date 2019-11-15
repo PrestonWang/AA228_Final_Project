@@ -18,8 +18,7 @@ classdef gridWorld
         plane; % plane object
         storm; % storm object
         costWeights; % 2-element vector of cost weights for distance and storm
-        radius = .5; % radius from airport
-        airport_reward = 1000;
+        radius; % radius from airport
     end
     
     methods
@@ -71,30 +70,29 @@ classdef gridWorld
             end
             % Compute Euclidean distance
             if norm([planeX-airportX, planeY-airportY]) <= world.radius
-                totalCost =  world.airport_reward; % High reward for reaching the airport
-            else
-                totalDist = sqrt((planeX-wayptX)^2 + (planeY-wayptY)^2) ...
-                    + sqrt((wayptX-airportX)^2 + (wayptY-airportY)^2);
-
-                % Compute storm cost: 2 line integrals
-                stormCosts = (1 / (sigma*sqrt(2*pi))) ...
-                    * exp(-((world.meshX-stormX).^2 ...
-                    + (world.meshY-stormY).^2)./(2*sigma^2));
-                % Source: https://www.mathworks.com/matlabcentral/answers/298011-line-integral-over-a-scalar-field
-                t = linspace(0,1,world.N*4)'; % number of points = world.N * 4
-                seg1 = (1-t)*[planeX, planeY] + t*[wayptX, wayptY];
-                zseg1 = interp2(world.meshX, world.meshY, stormCosts, ...
-                    seg1(:,1), seg1(:,2));
-                stormCost1 = trapz(cumsum([0;sqrt(sum(diff(seg1).^2,2))]), zseg1);
-                seg2 = (1-t)*[wayptX, wayptY] + t*[airportX, airportY];
-                zseg2 = interp2(world.meshX, world.meshY, stormCosts, ...
-                    seg2(:,1), seg2(:,2));
-                stormCost2 = trapz(cumsum([0;sqrt(sum(diff(seg2).^2,2))]), zseg2);
-
-                % Compute total cost
-                totalCost = -world.costWeights(1)*totalDist ...
-                    - world.costWeights(2)*(stormCost1+stormCost2);
-            end
+                R(s,a) = R(s,a) + endStateReward; % High reward for reaching the airport
+            totalDist = sqrt((planeX-wayptX)^2 + (planeY-wayptY)^2) ...
+                + sqrt((wayptX-airportX)^2 + (wayptY-airportY)^2);
+            
+            % Compute storm cost: 2 line integrals
+            stormCosts = (1 / (sigma*sqrt(2*pi))) ...
+                * exp(-((world.meshX-stormX).^2 ...
+                + (world.meshY-stormY).^2)./(2*sigma^2));
+            % Source: https://www.mathworks.com/matlabcentral/answers/298011-line-integral-over-a-scalar-field
+            t = linspace(0,1,world.N*4)'; % number of points = world.N * 4
+            seg1 = (1-t)*[planeX, planeY] + t*[wayptX, wayptY];
+            zseg1 = interp2(world.meshX, world.meshY, stormCosts, ...
+                seg1(:,1), seg1(:,2));
+            stormCost1 = trapz(cumsum([0;sqrt(sum(diff(seg1).^2,2))]), zseg1);
+            seg2 = (1-t)*[wayptX, wayptY] + t*[airportX, airportY];
+            zseg2 = interp2(world.meshX, world.meshY, stormCosts, ...
+                seg2(:,1), seg2(:,2));
+            stormCost2 = trapz(cumsum([0;sqrt(sum(diff(seg2).^2,2))]), zseg2);
+            
+            % Compute total cost
+            totalCost = world.costWeights(1)*totalDist ...
+                + world.costWeights(2)*(stormCost1+stormCost2);
+        end
         end
         
         %{

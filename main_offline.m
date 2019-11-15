@@ -8,7 +8,7 @@
 clear
 %% Parameters
 % file name
-filename = 'policy2.mat';
+filename = 'policy3.mat';
 
 % Storm Parameters
 stormX  = 0; % storm position (x)
@@ -57,10 +57,7 @@ for s = 1:total_states
     for a = 1:total_actions
         [px, py, sx, sy] = ind2sub(state_dim,s);
         [wx, wy] = ind2sub(action_dim,a);
-        R(s,a) = -g.cost((px-1)*10,(py-1)*10,(sx-1)*10,(sy-1)*10,(wx-1)*10,(wy-1)*10,stormS,airportX,airportY); % costs are negative rewards
-        if (px-1)*10 == g.airport(1) && (py-1)*10 == g.airport(2)
-            R(s,a) = R(s,a) + endStateReward; % High reward for reaching the airport
-        end
+        R(s,a) = g.cost(X(px),Y(py),X(sx),Y(sy),X(wx),Y(wy),stormS,airportX,airportY); % costs are negative rewards
     end
 end
 % setting up MDP
