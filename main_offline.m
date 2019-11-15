@@ -5,6 +5,7 @@
 % save policy and parameters as .mat file
 %   saves policy, stormS, stormT, N, airportX, airportY, costWeights,
 %   discount, epsilon
+clear
 %% Parameters
 % file name
 filename = 'policy2.mat';
@@ -39,7 +40,7 @@ max_iter = 1000;
 endStateReward = 1000; % Reward for reaching the airport
 
 %% Initialize Gridworld
-plane1 = plane([10,10,0,100000],1,5000/60);
+plane1 = plane([10,10,0,100000],1,5000/60, [wayptX, wayptY]);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
 
