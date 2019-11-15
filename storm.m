@@ -22,6 +22,7 @@ classdef storm < handle
     
     properties
         state; % location of storm (x,y)
+        state_past; % past locations of storm (x,y) (where columns are different time intervals)
         sigma; % standard deviation of Gaussian
         speed; % speed of storm, in miles per minute
         transProbs; % directional transition probabilities on the circle
@@ -32,6 +33,7 @@ classdef storm < handle
         % Constructor for an instance of the storm class
         function obj = storm(x, y, sigma, speed, transProbs)
             obj.state = [x,y];
+            obj.state_past = [x,y];
             obj.sigma = sigma;
             obj.speed = speed;
             if abs(sum(transProbs) - 1) > 1e-5
@@ -49,6 +51,7 @@ classdef storm < handle
             r = this.speed*dt; % dt in mins, speed in miles / min
             this.state = this.state + [r*cos(theta), r*sin(theta)];
             newState = this.state;
+            this.state_past = [this.state_past;newState];
         end
     end
 end

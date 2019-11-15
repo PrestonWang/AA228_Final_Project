@@ -10,20 +10,24 @@ classdef plane < handle
     
     properties
         v = 1; % miles/min
-        initcon; % initial conditions [x0; y0; theta0; m0]
+        initcon; % initial conditions [x0, y0, theta0, m0]
         fuel_rate = 5000/60 % lbs/min
-        state; % [x;y;theta;m]
+        state; % [x, y, theta, m]
         state_past; % matrix of previous states
+        target; % current target waypoint
+        target_past; % matrix of previous targets
     end
     
     methods
-        function obj = plane(initcon,v, fuel_rate)
+        function obj = plane(initcon,v, fuel_rate, target)
             %Construct a plane object with initial conditions
             obj.initcon = initcon;
             obj.state = initcon;
             obj.state_past = initcon;
             obj.v = v;
             obj.fuel_rate = fuel_rate;
+            obj.target = target;
+            obj.target_past = target;
         end
         
         function theta = calcHeading(obj,target)
@@ -35,9 +39,10 @@ classdef plane < handle
             %calcState returns the new states based on the new target
             %location and a timestep of t. 
             theta = obj.calcHeading(target);
-            new_state = [obj.state(1)+cos(theta)*obj.v*t; obj.state(2)+sin(theta)*obj.v*t; theta; obj.state(4) - obj.fuel_rate*t];
+            new_state = [obj.state(1)+cos(theta)*obj.v*t, obj.state(2)+sin(theta)*obj.v*t, theta, obj.state(4) - obj.fuel_rate*t];
             obj.state = new_state;
-            obj.state_past = [obj.state_past, new_state];
+            obj.state_past = [obj.state_past; new_state];
+            obj.target_past = [obj.target_past; target];
         end
     end
 end

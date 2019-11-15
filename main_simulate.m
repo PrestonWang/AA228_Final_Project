@@ -7,17 +7,18 @@
 % Created: 11/14/2019, CS
 % Updated: 11/14/2019, CS
 
+clear
 %% Parameters
 % Storm Parameters
-stormX  = randi([0, 100]); % storm position (x)
-stormY  = randi([0, 100]); % storm position (y)
+stormX  = 25; % storm position (x)
+stormY  = 25; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
 stormU  = 1; % storm speed (mi/min)
-stormT  = [0.2 0.4 0.3 0.1]; % transition probabilities (on circle)
+stormT  = [0.25 .25 .25 .25]; % transition probabilities (on circle)
 % Plane Parameters
 fuel_rate = 5000/60;
 planeX = 100;
-PlaneY = 100;
+planeY = 100;
 planeTheta = 0;
 planeM = 100000;
 planeV = 1;
@@ -33,10 +34,10 @@ costWeights = [1 1];
 %endState Threshold
 threshold = 10e-2;
 %% Initialization
-plane1 = plane([10,10,0,100000]',1,5000/60);
+plane1 = plane([planeX,planeY,0,100000],1,5000/60, [wayptX, wayptY]);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
-load policies/policy1.mat;
+load policies/policy2.mat;
 
 %% Simulate
 num_states = 4;
@@ -53,17 +54,14 @@ while sqrt((g.plane.state(1)-g.airport(1))^2 + (g.plane.state(2)-g.airport(2))^2
     % execute the policy of the closest grid point to the plane and storm
     % location
     action = policy(px+1, py+1, sx+1, sy+1);
-    [wayptX, wayptY] = ind2sub(action_dim,action);
-    wayptX = (wayptX-1)*10;
-    wayptY = (wayptY-1)*10;
-    oldpx = g.plane.state(1);
-    oldpy = g.plane.state(2);
-    target = [wayptX; wayptY];
+    [waypt_ix, waypt_iy] = ind2sub(action_dim,action);
+    wayptX = g.X(waypt_ix);
+    wayptY = g.X(waypt_iy);
+    target = [wayptX, wayptY];
     g.updatePos(1, target);
     % Use the line integral to compute the cost accumulated during a single
     % time step
-    penalty = g.cost(oldpx, oldpy, g.storm.state(1), g.storm.state(2), ...
-        g.storm.sigma, g.plane.state(1), g.plane.state(2), g.plane.state(1), g.plane.state(2));
+    penalty = g.cost();
     reward = reward - penalty;
     printVec = ['waypoint: ', num2str(wayptX), ', ', num2str(wayptY), ...
         ' plane Location: ', num2str(g.plane.state(1)), ', ', num2str(g.plane.state(2)), ...
@@ -77,6 +75,10 @@ printVec = ['waypoint: ', num2str(wayptX), ', ', num2str(wayptY), ...
         ' storm Location: ', num2str(g.storm.state(1)), ', ', num2str(g.storm.state(2)), ...
         ' total reward: ', num2str(reward)];
     disp(printVec)
+figure(1)
+hold on
+plot(plane1.state_past(:,1),plane1.state_past(:,2),'-rx')
+plot(storm1.state_past(:,2),storm1.state_past(:,2),'-o')
 
 % Helper function to get closest grid point
 function [px, py] = closestNeighbor(x, y, stepSize)

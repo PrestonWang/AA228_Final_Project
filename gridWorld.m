@@ -18,6 +18,7 @@ classdef gridWorld
         plane; % plane object
         storm; % storm object
         costWeights; % 2-element vector of cost weights for distance and storm
+        
     end
     
     methods
@@ -118,6 +119,7 @@ classdef gridWorld
             % Move storm and keep it within the bounds of the grid
             stormState = world.storm.move(timestep);
             attempts = 0;
+            %{
             while stormState(1) > max(world.X) || stormState(1) < min(world.X) ...
                     || stormState(2) > max(world.Y) || stormState(2) < min(world.Y)
                 stormState = world.storm.move(timestep);
@@ -126,6 +128,7 @@ classdef gridWorld
                     error('Storm is stuck :(');
                 end
             end
+            %}
         end
     end
 end

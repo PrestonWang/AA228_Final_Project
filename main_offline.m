@@ -7,7 +7,7 @@
 %   discount, epsilon
 %% Parameters
 % file name
-filename = 'policy1.mat'
+filename = 'policy2.mat';
 
 % Storm Parameters
 stormX  = 0; % storm position (x)
