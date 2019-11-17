@@ -77,6 +77,9 @@ classdef gridWorld
                     + sqrt((wayptX-airportX)^2 + (wayptY-airportY)^2);
 
                 % Compute storm cost: 2 line integrals
+                if world.costWeights(2) == 0
+                    totalCost = totalDist*world.costWeights(1);
+                else
                 stormCosts = exp(-((world.meshX-stormX).^2 ...
                     + (world.meshY-stormY).^2)./(2*sigma^2));
                 % Source: https://www.mathworks.com/matlabcentral/answers/298011-line-integral-over-a-scalar-field
@@ -93,6 +96,7 @@ classdef gridWorld
                 % Compute total cost
                 totalCost = -world.costWeights(1)*totalDist ...
                     - world.costWeights(2)*(stormCost1+stormCost2);
+                end
             end
         end
         

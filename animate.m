@@ -8,4 +8,5 @@ for w = 1:total_actions
 end
 plot(waypoints(:,1),waypoints(:,2),'ks','MarkerSize',10)
 plot(airportX, airportY, 'h','MarkerSize',20, 'MarkerFaceColor','green')
-plot(plane1.target_past(:,1),plane1.target_past(:,2),'-rx','MarkerSize',20)
+plot(plane1.state_past(:,1),plane1.state_past(:,2),'-rx')
+plot(storm1.state_past(:,2),storm1.state_past(:,2),'-o')

@@ -8,6 +8,7 @@
 % Updated: 11/14/2019, CS
 
 clear
+load policies/policy_base.mat;
 %% Parameters
 % Storm Parameters
 stormX  = 1; % storm position (x)
@@ -32,12 +33,11 @@ wayptX = 50;
 wayptY = 50;
 costWeights = [1 1];
 %endState Threshold
-threshold = 10e-2;
+threshold = 5;
 %% Initialization
 plane1 = plane([planeX,planeY,0,100000],1,5000/60, [wayptX, wayptY]);
 storm1 = storm(stormX, stormY, stormS, stormU, stormT);
 g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
-load policies/policy3.mat;
 
 %% Simulate
 num_states = 4;
@@ -58,27 +58,23 @@ while sqrt((g.plane.state(1)-g.airport(1))^2 + (g.plane.state(2)-g.airport(2))^2
     wayptX = g.X(waypt_ix);
     wayptY = g.X(waypt_iy);
     target = [wayptX, wayptY];
-    g.updatePos(10, target);
+    g.updatePos(1, target);
     % Use the line integral to compute the cost accumulated during a single
     % time step
     penalty = g.cost();
-    reward = reward - penalty;
+    reward = reward + penalty;
     printVec = ['waypoint: ', num2str(wayptX), ', ', num2str(wayptY), ...
         ' plane Location: ', num2str(g.plane.state(1)), ', ', num2str(g.plane.state(2)), ...
         ' storm Location: ', num2str(g.storm.state(1)), ', ', num2str(g.storm.state(2)), ...
         ' total reward: ', num2str(reward)];
     disp(printVec)
 end
-reward = reward + endStateReward;
+reward = reward;
 printVec = ['waypoint: ', num2str(wayptX), ', ', num2str(wayptY), ...
         ' plane Location: ', num2str(g.plane.state(1)), ', ', num2str(g.plane.state(2)), ...
         ' storm Location: ', num2str(g.storm.state(1)), ', ', num2str(g.storm.state(2)), ...
         ' total reward: ', num2str(reward)];
     disp(printVec)
-figure(1)
-hold on
-plot(plane1.state_past(:,1),plane1.state_past(:,2),'-rx')
-plot(storm1.state_past(:,2),storm1.state_past(:,2),'-o')
 
 % Helper function to get closest grid point
 function [px, py] = closestNeighbor(x, y, stepSize)
