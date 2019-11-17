@@ -19,7 +19,8 @@ classdef gridWorld
         storm; % storm object
         costWeights; % 2-element vector of cost weights for distance and storm
         radius = .5; % radius from airport
-        airport_reward = 1000;
+        airport_reward = 1000; % reward for reaching the airport
+        penalty = 100; % penalty for waypoint being at the same location as the plane
     end
     
     methods
@@ -75,7 +76,9 @@ classdef gridWorld
             else
                 totalDist = sqrt((planeX-wayptX)^2 + (planeY-wayptY)^2) ...
                     + sqrt((wayptX-airportX)^2 + (wayptY-airportY)^2);
-
+                if norm([wayptX-planeX, wayptY-planeY]) == 0
+                    totalDist = totalDist + world.penalty;
+                end
                 % Compute storm cost: 2 line integrals
                 stormCosts = exp(-((world.meshX-stormX).^2 ...
                     + (world.meshY-stormY).^2)./(2*sigma^2));
