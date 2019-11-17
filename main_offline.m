@@ -11,8 +11,8 @@ clear
 filename = 'policy3.mat';
 
 % Storm Parameters
-stormX  = 0; % storm position (x)
-stormY  = 0; % storm position (y)
+stormX  = 70; % storm position (x)
+stormY  = 70; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
 stormU  = 1; % storm speed (mi/min)
 stormT  = [0.2 0.4 0.3 0.1]; % transition probabilities (on circle)
@@ -65,7 +65,7 @@ for s = 1:total_states
     for a = 1:total_actions
         [px, py, sx, sy] = ind2sub(state_dim,s);
         [wx, wy] = ind2sub(action_dim,a);
-        R(s,a) = g.cost(X(px),Y(py),X(sx),Y(sy),X(wx),Y(wy),stormS,airportX,airportY); % costs are negative rewards
+        R(s,a) = g.cost(X(px),Y(py),X(sx),Y(sy),stormS,X(wx),Y(wy),airportX,airportY); % costs are negative rewards
     end
 end
 % setting up MDP
