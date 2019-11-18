@@ -14,7 +14,7 @@ load policies/policy6.mat;
 stormX  = 70; % storm position (x)
 stormY  = 70; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
-stormU  = 1; % storm speed (mi/min)
+stormU  = 0; % storm speed (mi/min)
 stormT  = [0.25 .25 .25 .25]; % transition probabilities (on circle)
 % Plane Parameters
 fuel_rate = 5000/60;
@@ -88,8 +88,7 @@ end
 plot(waypoints(:,1),waypoints(:,2),'ks','MarkerSize',10)
 plot(airportX, airportY, 'h','MarkerSize',20, 'MarkerFaceColor','green')
 plot(plane1.state_past(:,1),plane1.state_past(:,2),'-rx')
-plot(storm1.state_past(:,1),storm1.state_past(:,2),'-o')
-axis([-5 105 -5 105])
+plot(storm1.state_past(:,2),storm1.state_past(:,2),'-o')
 
 % Helper function to get closest grid point
 function [px, py] = closestNeighbor(x, y, stepSize)

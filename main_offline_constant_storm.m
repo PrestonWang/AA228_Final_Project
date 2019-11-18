@@ -8,7 +8,7 @@
 clear
 %% Parameters
 % file name
-filename = 'policy4.mat';
+filename = 'policy_storm_constant.mat';
 
 % Storm Parameters
 stormX  = 70; % storm position (x)
@@ -32,7 +32,7 @@ airportY = 50;
 wayptX = 50;
 wayptY = 50;
 %costWeights = [1 exp(0.5)];
-costWeights = [1 exp(0.5)];
+costWeights = [1 2*exp(0.5)];
 
 % value iteration parameters
 discount = 0.95;

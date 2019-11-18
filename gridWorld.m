@@ -20,6 +20,7 @@ classdef gridWorld
         costWeights; % 2-element vector of cost weights for distance and storm
         radius = .5; % radius from airport
         airport_reward = 1000; % reward for reaching the airport
+        airport_reward_plus = 100; % additional reward for having the waypoint at the airport. 
         penalty = 100; % penalty for waypoint being at the same location as the plane
     end
     
@@ -73,6 +74,9 @@ classdef gridWorld
             % Compute Euclidean distance
             if norm([planeX-airportX, planeY-airportY]) <= world.radius
                 totalCost =  world.airport_reward; % High reward for reaching the airport
+                if wayptX==airportX && wayptY==airportY
+                    totalCost = totalCost + world.airport_reward_plus;
+                end
             else
                 totalDist = sqrt((planeX-wayptX)^2 + (planeY-wayptY)^2) ...
                     + sqrt((wayptX-airportX)^2 + (wayptY-airportY)^2);
