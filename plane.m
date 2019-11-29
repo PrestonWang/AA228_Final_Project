@@ -1,7 +1,7 @@
 % Colin Shi, Preston Wang, and Nathan Wei
 % AA 228 Final Project, Fall 2019
 % Plane class: represents plane in 2D grid-world and allows it to move in
-% heading based on waypoint. 
+% heading based on waypoint.
 
 classdef plane < handle
     %2D kinematic plane model
@@ -37,12 +37,26 @@ classdef plane < handle
         end
         function [new_state] = calcState(obj,t,target)
             %calcState returns the new states based on the new target
-            %location and a timestep of t. 
+            %location and a timestep of t.
             theta = obj.calcHeading(target);
-            new_state = [obj.state(1)+cos(theta)*obj.v*t, obj.state(2)+sin(theta)*obj.v*t, theta, obj.state(4) - obj.fuel_rate*t];
+            new_state = [obj.state(1)+cos(theta)*obj.v*t; ...
+                obj.state(2)+sin(theta)*obj.v*t; theta; ...
+                obj.state(4) - obj.fuel_rate*t];
             obj.state = new_state;
-            obj.state_past = [obj.state_past; new_state];
-            obj.target_past = [obj.target_past; target];
+            obj.state_past = [obj.state_past, new_state];
+            obj.target_past = [obj.target_past, target];
+        end
+        function [new_state,dt] = goToState(obj,t,target)
+            % goHome sends the airplane home if it's close enough to the
+            % airport (must be decided on externally)
+            theta = obj.calcHeading(target);
+            dt = (sqrt((target(2)-obj.state(2))^2+(target(1)-obj.state(1))^2)...
+                /obj.v);
+            new_state = [target(1); target(2); theta; ...
+                obj.state(4) - obj.fuel_rate*dt];
+            obj.state = new_state;
+            obj.state_past = [obj.state_past, new_state];
+            obj.target_past = [obj.target_past, target];
         end
     end
 end

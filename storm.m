@@ -32,8 +32,8 @@ classdef storm < handle
     methods
         % Constructor for an instance of the storm class
         function obj = storm(x, y, sigma, speed, transProbs)
-            obj.state = [x,y];
-            obj.state_past = [x,y];
+            obj.state = [x;y];
+            obj.state_past = [x;y];
             obj.sigma = sigma;
             obj.speed = speed;
             if abs(sum(transProbs) - 1) > 1e-5
@@ -49,9 +49,9 @@ classdef storm < handle
             % Move storm then update newX and newY and X and Y in storm obj
             theta = randsrc(1, 1, [this.transAngles; this.transProbs]);
             r = this.speed*dt; % dt in mins, speed in miles / min
-            this.state = this.state + [r*cos(theta), r*sin(theta)];
+            this.state = this.state + [r*cos(theta); r*sin(theta)];
             newState = this.state;
-            this.state_past = [this.state_past;newState];
+            this.state_past = [this.state_past,newState];
         end
     end
 end
