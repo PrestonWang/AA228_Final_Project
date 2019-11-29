@@ -31,7 +31,7 @@ airportY = 50;
 wayptX = 50;
 wayptY = 50;
 %costWeights = [1 exp(0.5)];
-costWeights = [1 4*exp(0.5)];
+costWeights = [1 6*exp(0.5)];
 
 % value iteration parameters
 discount = 0.95;
