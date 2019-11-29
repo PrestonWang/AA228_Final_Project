@@ -8,7 +8,7 @@
 clear
 %% Parameters
 % file name
-filename = 'policy6.mat';
+filename = 'policy-1-6.mat';
 
 % Storm Parameters
 stormX  = 70; % storm position (x)
@@ -32,7 +32,7 @@ airportY = 50;
 wayptX = 50;
 wayptY = 50;
 %costWeights = [1 exp(0.5)];
-costWeights = [1 2*exp(0.5)];
+costWeights = [1 6*exp(0.5)];
 
 % value iteration parameters
 discount = 0.95;
@@ -82,6 +82,6 @@ for p = 1:total_states
 end
 
 % saving
-save(filename,'policy','N','airportX', 'airportY','costWeights','discount','epsilon', 'stormS','stormT');
+save(filename,'policy','g','discount','epsilon');
 close(h);
 fprintf('Offline solver completed in %.2f minutes!\n', toc/60);

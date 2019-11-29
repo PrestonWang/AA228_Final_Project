@@ -8,7 +8,7 @@
 % Updated: 11/28/2019, NW
 
 clear
-load policies/policy6.mat;
+load policies/policy-1-2.mat;
 %% Parameters
 % Experiment parameters
 timeStep = 5; % time between updates (min)
@@ -93,22 +93,7 @@ printVec = ['waypoint: ', num2str(wayptX), ', ', num2str(wayptY), ...
 disp(printVec)
 
 %% Plotting plane position
-figure(1)
-clf
-waypoints = zeros(total_actions,2);
-for w = 1:total_actions
-    [wx, wy] = ind2sub(action_dim,w);
-    waypoints(w,:) = [X(wx) Y(wy)];
-end
-plot(waypoints(:,1),waypoints(:,2),'ks','MarkerSize',10)
-xlim([-5 105]);
-ylim([-5 105]);
-axis equal;
-hold on;
-plot(airportX, airportY, 'h','MarkerSize',20, 'MarkerFaceColor','green')
-plot(plane1.state_past(1,:),plane1.state_past(2,:),'-rx')
-plot(storm1.state_past(1,:),storm1.state_past(2,:),'-bo')
-
+animate
 % Helper function to get closest grid point
 function [px, py] = closestNeighbor(x, y, stepSize, xLims, yLims)
 x1 = fix(x/stepSize);
