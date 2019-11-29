@@ -137,10 +137,10 @@ classdef gridWorld
                 newState = world.plane.calcState(timestep, target);
             end
             % Validation (should never happen if plane.v*timestep < dx)
-            if newState(1) > max(world.X) || newState(1) < min(world.X) ...
-                    || newState(2) > max(world.Y) || newState(2) < min(world.Y)
-                error('Plane is out of range!');
-            end
+            % if newState(1) > max(world.X) || newState(1) < min(world.X) ...
+            %         || newState(2) > max(world.Y) || newState(2) < min(world.Y)
+            %     error('Plane is out of range!');
+            % end
             % Move storm and keep it within the bounds of the grid
             stormState = world.storm.move(timestep);
             %{

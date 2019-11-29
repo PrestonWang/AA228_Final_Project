@@ -11,9 +11,10 @@ load policies/policy6.mat;
 
 %% Parameters
 % Experiment parameters
-numIter = 100; % number of experiments to run
+numIter = 5000; % number of experiments to run
 timeStep = 10; % time between updates (min)
 runDebug = 0; % 1: plot individual results; 0: don't
+saveFile = 1; % 1: save experiment file with the following name; 0: don't
 saveName = 'Experiments_20191128_MDP_N100_dt10mins.mat';
 % Storm Parameters
 stormS  = 10; % storm standard deviation (mi)
@@ -145,11 +146,17 @@ end
 
 %% Process results
 
+fprintf('Average delay: %.2f%%\n', mean(percentDelay)*100);
+
 % Save file
-save(fullfile('experiments', saveName), 'data', 'percentDelay');
+if saveFile
+    save(fullfile('experiments', saveName), 'data', 'percentDelay');
+end
 
 % Bootstrapping analysis
-fprintf('Average delay: %.2f%%\n', mean(percentDelay)*100);
+sampleStdv = std(bootstrp(numIter*100, @mean, percentDelay));
+fprintf('Standard deviation after %d iterations: +/- %.2f%%\n', ...
+    numIter, sampleStdv*100);
 
 %% Helper function to get closest grid point
 function [px, py] = closestNeighbor(x, y, stepSize, xLims, yLims)
