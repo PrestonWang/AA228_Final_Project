@@ -8,11 +8,16 @@
 % Updated: 11/14/2019, CS
 
 clear
-load policies/policy6.mat;
+load policies/policy-1-2.mat;
 %% Parameters
 % Storm Parameters
+<<<<<<< Updated upstream
 stormX  = 70; % storm position (x)
 stormY  = 70; % storm position (y)
+=======
+stormX  = 80; % storm position (x)
+stormY  = 50; % storm position (y)
+>>>>>>> Stashed changes
 stormS  = 10; % storm standard deviation (mi)
 stormU  = 1; % storm speed (mi/min)
 stormT  = [0.25 .25 .25 .25]; % transition probabilities (on circle)
@@ -77,6 +82,7 @@ printVec = ['waypoint: ', num2str(wayptX), ', ', num2str(wayptY), ...
     disp(printVec)
 
 %% Plotting plane position
+<<<<<<< Updated upstream
 figure(1)
 clf
 hold on
@@ -91,6 +97,9 @@ plot(plane1.state_past(:,1),plane1.state_past(:,2),'-rx')
 plot(storm1.state_past(:,1),storm1.state_past(:,2),'-o')
 axis([-5 105 -5 105])
 
+=======
+animate
+>>>>>>> Stashed changes
 % Helper function to get closest grid point
 function [px, py] = closestNeighbor(x, y, stepSize)
 x1 = fix(x/stepSize);
