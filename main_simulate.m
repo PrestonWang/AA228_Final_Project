@@ -14,8 +14,8 @@ load policies/policy6.mat;
 stormX  = 70; % storm position (x)
 stormY  = 70; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
-stormU  = 1; % storm speed (mi/min)
-stormT  = [0.25 .25 .25 .25]; % transition probabilities (on circle)
+stormU  = 0; % storm speed (mi/min)
+stormT  = [0 0 1 0]; % transition probabilities (on circle)
 % Plane Parameters
 fuel_rate = 5000/60;
 planeX = 100;
@@ -31,7 +31,7 @@ airportX = 50;
 airportY = 50;
 wayptX = 50;
 wayptY = 50;
-costWeights = [1 1];
+costWeights = [1 2*exp(0.5)];
 %endState Threshold
 threshold = 1;
 %% Initialization

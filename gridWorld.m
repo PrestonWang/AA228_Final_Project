@@ -125,7 +125,17 @@ classdef gridWorld
         
         % Update positions of plane and storm
         function updatePos(world, timestep, target)
-            newState = world.plane.calcState(timestep, target);
+            oldState = world.plane.state;
+            % If target is on airport and airplane can reach it within the
+            % timestep, then send the thing home!
+            if sqrt((oldState(2)-world.airport(2))^2 ...
+                +(oldState(1)-world.airport(1))^2) < timestep*world.plane.v ...
+                && target(1) == world.airport(1) && target(2) == world.airport(2)
+                newState = world.plane.goToState(timestep, target);
+            else
+                % Otherwise, compute new state
+                newState = world.plane.calcState(timestep, target);
+            end
             % Validation (should never happen if plane.v*timestep < dx)
             if newState(1) > max(world.X) || newState(1) < min(world.X) ...
                     || newState(2) > max(world.Y) || newState(2) < min(world.Y)
@@ -133,8 +143,8 @@ classdef gridWorld
             end
             % Move storm and keep it within the bounds of the grid
             stormState = world.storm.move(timestep);
-            attempts = 0;
             %{
+            attempts = 0;
             while stormState(1) > max(world.X) || stormState(1) < min(world.X) ...
                     || stormState(2) > max(world.Y) || stormState(2) < min(world.Y)
                 stormState = world.storm.move(timestep);
