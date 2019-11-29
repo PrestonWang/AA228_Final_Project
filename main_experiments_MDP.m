@@ -36,7 +36,7 @@ wayptX = 50;
 wayptY = 50;
 costWeights = [1 2*exp(0.5)];
 %endState Threshold
-threshold = 10;
+% threshold = 10;
 
 %% Run experiments
 
@@ -95,12 +95,10 @@ for ii = 1 : numIter
         wayptY = g.X(waypt_iy);
         target = [wayptX; wayptY];
         g.updatePos(timeStep, target);
-        % Use the line integral to compute the cost accumulated during a single
-        % time step
+        % Use line integral to compute the cost accumulated during a single time step
         penalty = g.cost();
         reward = reward + penalty;
-        % Check to see if airplane has passed near enough to airport
-        % Initial check based on external threshold (one grid spacing)
+        % Check to see if airplane has arrived at the airport
         if sqrt((g.plane.state(1)-g.airport(1))^2 + (g.plane.state(2)-g.airport(2))^2) == 0
             isHome = 1;
         end
