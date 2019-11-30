@@ -10,8 +10,8 @@ clear
 % file name
 filename = 'policy_storm_constant.mat';
 % Storm Parameters
-stormX  = 70; % storm position (x)
-stormY  = 70; % storm position (y)
+stormX  = 60; % storm position (x)
+stormY  = 50; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
 stormU  = 1; % storm speed (mi/min)
 stormT  = [0.2 0.4 0.3 0.1]; % transition probabilities (on circle)
@@ -31,7 +31,7 @@ airportY = 50;
 wayptX = 50;
 wayptY = 50;
 %costWeights = [1 exp(0.5)];
-costWeights = [1 6*exp(0.5)];
+costWeights = [1 4*exp(0.5)];
 
 % value iteration parameters
 discount = 0.95;
@@ -91,7 +91,6 @@ for w = 1:total_actions
 end
 plot(waypoints(:,1),waypoints(:,2),'ks','MarkerSize',10)
 plot(airportX, airportY, 'h','MarkerSize',20, 'MarkerFaceColor','green')
-
 policy_cell = cell(state_dim);
 for p = 1:total_states
     [px, py] = ind2sub(state_dim,p);
@@ -101,6 +100,7 @@ for p = 1:total_states
     quiver(X(px),Y(py), dp(1), dp(2),0)
 end
 viscircles([stormX stormY],10,'LineStyle','--')
+axis([-5 105 -5 105])
 %% saving
 save(filename,'policy','N','airportX', 'airportY','costWeights','discount','epsilon', 'stormS','stormT');
 close(h);
