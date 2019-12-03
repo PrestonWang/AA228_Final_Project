@@ -9,13 +9,13 @@
 
 clear
 load policies/policy-1-4.mat;
-saveFile =01;
+saveFile = 1;
 %% Parameters
 % Experiment parameters
-timeStep = 5; % time between updates (min)
+timeStep = 1; % time between updates (min)
 % Storm Parameters
-stormX  = 40; % storm position (x)
-stormY  = 20; % storm position (y)
+stormX  = 60; % storm position (x)
+stormY  = 40; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
 stormU  = 0.75; % storm speed (mi/min)
 nStormPts = 360;
@@ -26,7 +26,7 @@ planeX = 100;
 planeY = 50;
 planeTheta = 0;
 planeM = 100000;
-planeV = 1;
+planeV = 3;
 % Gridworld Parameters
 N = 11;
 X = 0:10:100;
@@ -35,7 +35,7 @@ airportX = 50;
 airportY = 50;
 wayptX = 50;
 wayptY = 50;
-costWeights = [1 2*exp(0.5)];
+costWeights = [1 4*exp(0.5)];
 %endState Threshold
 % threshold = 1;
 
