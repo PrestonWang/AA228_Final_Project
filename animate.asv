@@ -28,9 +28,8 @@ da = plane1.target_past(1:2,1) - plane1.state_past(1:2,1);
 arrow = quiver(plane1.state_past(1,1),plane1.state_past(2,1), da(1), da(2),0,'m','LineWidth',1.5);
 axis equal;
 axis([-5 105 -5 105]);
-num_iter = size(plane1.state_past(1,:),2);
-Frames(num_iter) = struct('cdata',[],'colormap',[]);
-for i = 1:num_iter
+num
+for i = 1:size(plane1.state_past(1,:),2)
     da = plane1.target_past(1:2,i) - plane1.state_past(1:2,i);
     plane.XData = [plane.XData, plane1.state_past(1,i)];
     plane.YData = [plane.YData, plane1.state_past(2,i)];
@@ -41,7 +40,6 @@ for i = 1:num_iter
     arrow.UData = da(1);
     arrow.VData = da(2);
     drawnow
-    Frames(i) = getframe(figure(2));
-    pause(0.25)
+    pause
 end
 
