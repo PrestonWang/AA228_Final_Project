@@ -68,19 +68,22 @@ while ~isHome
     clf
     image('CData',airport,'XData',[world.airport(1)+5 world.airport(1)-5],'YData',[world.airport(2)+5 world.airport(2)-5])
     hold on
-    p=plot(world.plane.state(1),world.plane.state(2),'bo');
+    plot(waypoints(:,1),waypoints(:,2),'ks','MarkerSize',10)
+    p=plot(world.plane.state(1),world.plane.state(2),'r^','MarkerSize',10,'MarkerFaceColor','r');
     total_path = [world.plane.state(1), world.plane.state(2); Optimal_path(:,1), Optimal_path(:,2)];
-    plot(total_path(:,1),total_path(:,2),'LineWidth',2);
-    plot(world.storm.state(1),world.storm.state(2), '-ro', 'MarkerSize', 45);
+    plot(world.storm.state(1),world.storm.state(2), 'bo', 'MarkerSize', 45);
+        plot(total_path(:,1),total_path(:,2),'LineWidth',2);
     waypoints = zeros(121,2);
     for w = 1:121
         [wx, wy] = ind2sub([11,11],w);
         waypoints(w,:) = [X(wx) Y(wy)];
     end
     axis equal;
+    legend('Waypoints','Plane','Storm','Plane Path')
+    xlabel('X(m)');
+    ylabel('Y(m)');
     axis([-5 105 -5 105]);
-    plot(waypoints(:,1),waypoints(:,2),'ks','MarkerSize',10)
-    pause(0.5)
+    pause()
     if distance(world.plane.state(1),world.plane.state(2),world.airport(1),world.airport(2)) == 0
         isHome = 1;
     end
@@ -90,10 +93,10 @@ Optimal_path = AStar_calc(world);
 %Plot the Optimal Path!
 image('CData',airport,'XData',[world.airport(1)+5 world.airport(1)-5],'YData',[world.airport(2)+5 world.airport(2)-5])
 hold on
-p=plot(world.plane.state(1),world.plane.state(2),'bo');
+p=plot(world.plane.state(1),world.plane.state(2),'rx');
 total_path = [world.plane.state(1), world.plane.state(2); Optimal_path(:,1), Optimal_path(:,2)];
 plot(total_path(:,1),total_path(:,2),'LineWidth',2);
-plot(world.storm.state(1),world.storm.state(2), '-ro', 'MarkerSize', 45);
+plot(world.storm.state(1),world.storm.state(2), '-bo', 'MarkerSize', 45);
 waypoints = zeros(121,2);
 for w = 1:121
     [wx, wy] = ind2sub([11,11],w);

@@ -31,7 +31,7 @@ airportY = 50;
 wayptX = 50;
 wayptY = 50;
 %costWeights = [1 exp(0.5)];
-costWeights = [1 6*exp(0.5)];
+costWeights = [1 1*exp(0.5)];
 
 % value iteration parameters
 discount = 0.95;
@@ -100,11 +100,11 @@ for p = 1:total_states
     [wx, wy] = ind2sub(action_dim,policy_vec(p));
     policy_cell{px,py}=[X(wx),Y(wy)];
     dp = [X(wx), Y(wy)] - [X(px),Y(py)];
-    q = quiver(X(px),Y(py), dp(1), dp(2),0);
+    quiver(X(px),Y(py), dp(1), dp(2),0)
 end
 xlabel('X(m)');
 ylabel('Y(m)');
-legend([wp, sp, q],'Waypoints','Storm', 'Policies');
+legend('Waypoints','Plane Starting Point','Plane','Storm Starting Point','Storm');
 axis equal;
 axis([-5 105 -5 105]);
 

@@ -8,12 +8,13 @@
 % Updated: 11/28/2019, NW
 
 clear
-load policies/policy-1-3.mat;
+load policies/policy-1-2.mat;
 %% Parameters
 % Experiment parameters
 timeStep = 5; % time between updates (min)
 % Storm Parameters
-stormX  = 90; % storm position (x)
+stormX  = 80;
+0; % storm position (x)
 stormY  = 50; % storm position (y)
 stormS  = 10; % storm standard deviation (mi)
 stormU  = 0.75; % storm speed (mi/min)
@@ -26,7 +27,7 @@ planeX = 100;
 planeY = 50;
 planeTheta = 0;
 planeM = 100000;
-planeV = 1;
+planeV = 3;
 % Gridworld Parameters
 N = 11;
 X = 0:10:100;
