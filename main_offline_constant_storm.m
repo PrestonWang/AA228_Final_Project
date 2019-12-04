@@ -31,7 +31,7 @@ airportY = 50;
 wayptX = 50;
 wayptY = 50;
 %costWeights = [1 exp(0.5)];
-costWeights = [1 6*exp(0.5)];
+costWeights = [1 2*exp(0.5)];
 
 % value iteration parameters
 discount = 0.95;
@@ -93,7 +93,7 @@ airport = imread('IMAGES/airport.png');
 airport(airport == 0) = 255;
 image('CData',airport,'XData',[g.airport(1)+5 g.airport(1)-5],'YData',[g.airport(2)+5 g.airport(2)-5])
 wp = plot(waypoints(:,1),waypoints(:,2),'ks','MarkerSize',10);
-sp = viscircles([stormX stormY],10,'LineStyle','--');
+sp = viscircles([stormX stormY],10,'LineStyle','--','Color','b');
 policy_cell = cell(state_dim);
 for p = 1:total_states
     [px, py] = ind2sub(state_dim,p);
@@ -102,13 +102,13 @@ for p = 1:total_states
     dp = [X(wx), Y(wy)] - [X(px),Y(py)];
     q = quiver(X(px),Y(py), dp(1), dp(2),0);
 end
-xlabel('X(m)');
-ylabel('Y(m)');
-legend([wp, sp, q],'Waypoints','Storm', 'Policies');
+xlabel('X (miles)');
+ylabel('Y (miles)');
+legend([wp, sp, q],'Waypoints','Storm ($\sigma=10$ miles)', 'Policies');
 axis equal;
 axis([-5 105 -5 105]);
 
 %% saving
-save(filename,'policy','N','airportX', 'airportY','costWeights','discount','epsilon', 'stormS','stormT');
+% save(filename,'policy','N','airportX', 'airportY','costWeights','discount','epsilon', 'stormS','stormT');
 close(h);
 fprintf('Offline solver completed in %.2f minutes!\n', toc/60);
