@@ -9,10 +9,10 @@
 
 clear
 load policies/policy-1-4.mat;
-saveFile = 1;
+saveFile = 0;
 %% Parameters
 % Experiment parameters
-timeStep = 1; % time between updates (min)
+timeStep = 5; % time between updates (min)
 % Storm Parameters
 stormX  = 60; % storm position (x)
 stormY  = 40; % storm position (y)
