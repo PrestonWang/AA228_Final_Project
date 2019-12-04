@@ -7,24 +7,24 @@
 % Updated: 11/28/2019, NW
 
 clear
-load policies/policy6.mat;
+load policies/policy-1-4.mat;
 
 %% Parameters
 % Experiment parameters
-numIter = 5000; % number of experiments to run
-timeStep = 10; % time between updates (min)
+numIter = 10000; % number of experiments to run
+timeStep = 5; % time between updates (min)
 runDebug = 0; % 1: plot individual results; 0: don't
 saveFile = 1; % 1: save experiment file with the following name; 0: don't
-saveName = 'Experiments_20191128_MDP'; % first part of filename
+saveName = 'Experiment3_20191203_MDP'; % first part of filename
 % Storm Parameters
 stormS  = 10; % storm standard deviation (mi)
 stormU  = 0.75; % storm speed (mi/min) - supercell around 20 m/s at 6 km (20,000 ft)
-nStormPts = 360;
+nStormPts = 8;
 stormT  = ones(1,nStormPts)/nStormPts; % transition probabilities (on circle)
 % Plane Parameters
 fuel_rate = 5000/60;
 planeM = 100000;
-planeV = 1;
+planeV = 3;
 planeTheta = 0;
 % Gridworld Parameters
 N = 11;
@@ -34,7 +34,7 @@ airportX = 50;
 airportY = 50;
 wayptX = 50;
 wayptY = 50;
-costWeights = [1 2*exp(0.5)];
+costWeights = [1 4*exp(0.5)];
 %endState Threshold
 % threshold = 10;
 
@@ -62,6 +62,9 @@ for ii = 1 : numIter
     planeX = X(pX); % plane position (x)
     planeY = Y(pY); % plane position (y)
     plane1 = plane([planeX;planeY;planeTheta;planeM],planeV,fuel_rate, [wayptX; wayptY]);
+    %stormT = zeros(1,nStormPts);
+    %idx = randi(nStormPts);
+    %stormT(idx) = 1;
     storm1 = storm(stormX, stormY, stormS, stormU, stormT);
     g = gridWorld(N, X, Y, wayptX, wayptY, airportX, airportY, plane1, storm1, costWeights);
     
